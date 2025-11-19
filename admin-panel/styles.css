@@ -5994,23 +5994,50 @@ input:focus, textarea:focus, select:focus {
     min-width: 120px;
     white-space: nowrap;
     padding: 12px 20px;
-    background-color: var(--bg)  !important;
-    color: var(--text);
-    border: 2px solid var(--border-color);
-    transition: all 0.3s ease;
+    background-color: var(--bg, #ffffff) !important;
+    color: var(--text, #212529) !important;
+    border: 2px solid var(--border, #dee2e6) !important;
+    transition: all 0.3s ease !important;
 }
 
+.copy-link-btn:hover {
+    background-color: var(--surface, #f8f9fa) !important;
+    border-color: var(--accent, #007bff) !important;
+}
 
-
+/* Specific override for copied state */
+.btn.copy-link-btn.copied,
 .copy-link-btn.copied {
     background-color: #28a745 !important;
+    background: #28a745 !important;
     color: white !important;
     border-color: #28a745 !important;
+    border: 2px solid #28a745 !important;
+    transform: scale(0.95);
+    animation: copySuccess 0.3s ease-out;
 }
 
+@keyframes copySuccess {
+    0% {
+        background-color: #007bff;
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.9);
+    }
+    100% {
+        background-color: #28a745;
+        transform: scale(0.95);
+    }
+}
+
+.btn.copy-link-btn.copied:hover,
 .copy-link-btn.copied:hover {
     background-color: #218838 !important;
+    background: #218838 !important;
     border-color: #218838 !important;
+    border: 2px solid #218838 !important;
+    transform: scale(0.95);
 }
 
 @media (max-width: 768px) {

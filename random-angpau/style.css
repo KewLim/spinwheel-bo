@@ -798,9 +798,23 @@ h1 {
 
 /* Prize Modal with celebration GIF background */
 #prizeModal {
-    background: url('../admin-panel/random-angpau/gif/08-51-41-992_512.gif') center center / cover,
+    background: url('../admin-panel/random-angpau/gif/08-51-41-992_512.gif') center center / 350px 200px,
                 rgba(0, 0, 0, 0.7);
     background-repeat: no-repeat;
+}
+
+#prizeModal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../admin-panel/random-angpau/gif/08-51-41-992_512.gif') center center / 200px 200px;
+    filter: blur(5px);
+    mask: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,1) 100%);
+    -webkit-mask: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,1) 100%);
+    z-index: -1;
 }
 
 #prizeModal .modal-content {
@@ -811,13 +825,51 @@ h1 {
 
 /* Already Played Modal with warning GIF background */
 #alreadyPlayedModal {
-    background: url('../admin-panel/random-angpau/gif/08-51-41-992_512.gif') center center / cover,
+    background: url('../admin-panel/random-angpau/gif/08-51-41-992_512.gif') center center / 200px 200px,
                 rgba(0, 0, 0, 0.7);
     background-repeat: no-repeat;
 }
 
+#alreadyPlayedModal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../admin-panel/random-angpau/gif/08-51-41-992_512.gif') center center / 200px 200px;
+    filter: blur(5px);
+    mask: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,1) 100%);
+    -webkit-mask: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,1) 100%);
+    z-index: -1;
+}
+
 #alreadyPlayedModal .already-played-modal {
     background: white;
+}
+
+/* ==================== Congratulations Animation ==================== */
+
+/* Simple scale animation for "Congratulations!" text */
+#prizeModal .modal-content h2 {
+    animation: simpleScale 2.5s ease-in-out infinite;
+}
+
+@keyframes simpleScale {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+/* GIF delay animation - adds pause between repetitions */
+@keyframes gifDelay {
+    0% { opacity: 1; }
+    70% { opacity: 1; } /* GIF visible for 70% of cycle */
+    71% { opacity: 0; } /* Start fade out */
+    100% { opacity: 0; } /* Hidden for remaining 30% = delay */
 }
 
 

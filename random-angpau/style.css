@@ -201,7 +201,8 @@ h1 {
 }
 
 .modal-content {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%),
+                url('gif/08-51-41-992_512.gif') center center / cover;
     padding: 40px;
     border-radius: 20px;
     text-align: center;
@@ -638,7 +639,8 @@ h1 {
     width: 90%;
     text-align: center;
     padding: 30px 25px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%),
+                url('gif/08-51-41-992_512.gif') center center / cover;
     position: relative;
     backdrop-filter: blur(1px);
 }
@@ -824,9 +826,11 @@ h1 {
  *    If you convert GIF to sprite sheet, you can control speed with CSS
  */
 
-/* Prize Modal with solid background (GIF removed - file not found) */
+/* Prize Modal with celebration GIF background */
 #prizeModal {
-    background: rgba(0, 0, 0, 0.7);
+    background: url('gif/08-51-41-992_512.gif') center center / 350px 200px,
+                rgba(0, 0, 0, 0.7);
+    background-repeat: no-repeat;
 }
 
 #prizeModal::before {
@@ -836,7 +840,7 @@ h1 {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: url('gif/08-51-41-992_512.gif') center center / 200px 200px;
     filter: blur(5px);
     mask: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,1) 100%);
     -webkit-mask: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,1) 100%);
@@ -849,9 +853,11 @@ h1 {
 
 
 
-/* Already Played Modal with solid background (GIF removed - file not found) */
+/* Already Played Modal with warning GIF background */
 #alreadyPlayedModal {
-    background: rgba(0, 0, 0, 0.7);
+    background: url('gif/08-51-41-992_512.gif') center center / 200px 200px,
+                rgba(0, 0, 0, 0.7);
+    background-repeat: no-repeat;
 }
 
 #alreadyPlayedModal::before {
@@ -861,7 +867,7 @@ h1 {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    background: url('gif/08-51-41-992_512.gif') center center / 200px 200px;
     filter: blur(5px);
     mask: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,1) 100%);
     -webkit-mask: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,1) 100%);

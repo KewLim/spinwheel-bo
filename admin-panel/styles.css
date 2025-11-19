@@ -1270,8 +1270,8 @@ button:active {
     display: block;
 }
 
-/* Loading Overlay */
-.loading-overlay {
+/* Loading Overlay - REMOVED */
+/* .loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1282,11 +1282,11 @@ button:active {
     justify-content: center;
     align-items: center;
     z-index: 2000;
-}
+} */
 
-.loading-spinner {
+/* .loading-spinner {
     text-align: center;
-}
+} */
 
 .loading-spinner i {
     font-size: 48px;
@@ -4491,7 +4491,7 @@ button:active {
     gap: 8px;
 }
 
-.loading-overlay {
+/* .loading-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -4502,11 +4502,11 @@ button:active {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-}
+} */
 
-.loading-overlay.show {
+/* .loading-overlay.show {
     display: flex;
-}
+} */
 
 /* Live data indicator styles */
 .live-indicator-dot {

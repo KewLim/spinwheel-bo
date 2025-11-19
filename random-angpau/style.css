@@ -641,7 +641,6 @@ h1 {
     padding: 30px 25px;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%),
                 url('gif/warning.gif') center center / cover;
-    border: 3px solid #dc3545;
     position: relative;
     backdrop-filter: blur(1px);
 }

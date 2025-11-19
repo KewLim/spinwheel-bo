@@ -499,11 +499,13 @@ class AdminPanel {
     }
 
     showLoading() {
-        document.getElementById('loadingOverlay').classList.add('show');
+        // Loading overlay disabled
+        // document.getElementById('loadingOverlay').classList.add('show');
     }
 
     hideLoading() {
-        document.getElementById('loadingOverlay').classList.remove('show');
+        // Loading overlay disabled
+        // document.getElementById('loadingOverlay').classList.remove('show');
     }
 
     startIndiaTimeDisplay() {

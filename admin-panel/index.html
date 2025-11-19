@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuckyTaj Admin Panel</title>
+    <link rel="stylesheet" href="/admin/assets/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-container d-none">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="/images/img/logo.png" alt="LuckyTaj" class="logo">
+                    <h2>Admin Panel</h2>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn-login btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+                <div id="loginError" class="error-message d-none"></div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="dashboard" class="dashboard d-none">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <img src="/images/img/logo.png" alt="LuckyTaj" class="logo-small">
+                    <h1>Admin Panel</h1>
+                </div>
+                <div class="header-right">
+                    <span id="adminEmail" class="admin-email"></span>
+                    <div class="theme-toggle" id="themeToggle">🌙</div>
+                    <div class="india-time-display">
+                        <span id="indiaTime" class="time-text"></span>
+                    </div>
+                    <button id="logoutBtn" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Dashboard Layout -->
+            <div class="dashboard-main">
+                <!-- Navigation Tabs -->
+                <nav class="tab-navigation">
+                    <button class="tab-btn active" data-tab="metrics">
+                        <i class="fas fa-chart-bar"></i> User Interaction Metrics
+                    </button>
+                    <button class="tab-btn" data-tab="otp-requests">
+                        <i class="fas fa-mobile-alt"></i> OTP Requests
+                    </button>
+                    <button class="tab-btn" data-tab="comments">
+                        <i class="fas fa-comments"></i> Fake Comments
+                    </button>
+                    <button class="tab-btn" data-tab="videos">
+                        <i class="fas fa-video"></i> TV Session
+                    </button>
+                    <button class="tab-btn" data-tab="tournament-tv">
+                        <i class="fas fa-tv"></i> Tournament TV
+                    </button>
+                    <button class="tab-btn" data-tab="games">
+                        <i class="fas fa-gamepad"></i> Daily Games
+                    </button>
+                    <button class="tab-btn" data-tab="winners">
+                        <i class="fas fa-trophy"></i> Winner Board
+                    </button>
+                    <button class="tab-btn" data-tab="jackpot">
+                        <i class="fas fa-coins"></i> Jackpot Timer
+                    </button>
+                    <button class="tab-btn" data-tab="angpau">
+                        <i class="fas fa-gift"></i> Angpau
+                    </button>
+
+                </nav>
+
+                <!-- Content Sections -->
+                <main class="dashboard-content">
+                <!-- User Interaction Metrics Section -->
+                <section id="metrics" class="content-section active">
+                    <div class="section-header">
+                        <h2><i class="fas fa-chart-bar"></i> User Interaction Metrics</h2>
+                        <button class="btn btn-primary refresh-btn" onclick="refreshMetrics()">
+                            <i class="fas fa-sync-alt"></i> Refresh Data
+                        </button>
+                    </div>
+                    <div class="metrics-dashboard">
+                        <!-- Overview Cards -->
+                        <div class="metrics-overview">
+                            <div class="metric-card">
+                                <div class="metric-icon"><i class="fas fa-eye"></i></div>
+                                <div class="metric-content">
+                                    <h3>Total Views</h3>
+                                    <div class="metric-value" id="totalViews">-</div>
+                                    <div class="metric-change" id="totalViewsChange">+0% from last 24h</div>
+                                </div>
+                                <div class="metric-chart">
+                                    <canvas id="viewsChart" width="80" height="40"></canvas>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-icon"><i class="fas fa-users"></i></div>
+                                <div class="metric-content">
+                                    <h3>Verified Phones</h3>
+                                    <div class="metric-value" id="verifiedPhones">-</div>
+                                    <div class="metric-change" id="verifiedPhonesChange">+0% from last 24h</div>
+                                </div>
+                                <div class="metric-chart">
+                                    <canvas id="visitorsChart" width="80" height="40"></canvas>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-icon"><i class="fas fa-mouse-pointer"></i></div>
+                                <div class="metric-content">
+                                    <h3>Average CTR</h3>
+                                    <div class="metric-value" id="clickThroughRate">0%</div>
+                                    <div class="metric-change" id="clickThroughRateChange">+0% from yesterday</div>
+                                </div>
+                                <div class="metric-chart">
+                                    <canvas id="ctrChart" width="80" height="40"></canvas>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-icon"><i class="fas fa-clock"></i></div>
+                                <div class="metric-content">
+                                    <h3>Avg. Time on Page</h3>
+                                    <div class="metric-value" id="avgTimeOnPage">0s</div>
+                                    <div class="metric-change" id="avgTimeOnPageChange">+0% from yesterday</div>
+                                </div>
+                                <div class="metric-chart">
+                                    <canvas id="timeChart" width="80" height="40"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Device Type Chart -->
+                        <div class="metrics-section">
+                            <h3>Device Type Distribution</h3>
+                            <div class="device-metrics">
+                                <div class="device-chart">
+                                    <div class="device-stat">
+                                        <span class="device-label"><i class="fas fa-mobile-alt"></i> Mobile</span>
+                                        <div class="device-bar">
+                                            <div class="device-fill mobile"></div>
+                                        </div>
+                                        <span class="device-percentage" id="mobilePercentage">0%</span>
+                                    </div>
+                                    <div class="device-stat">
+                                        <span class="device-label"><i class="fas fa-desktop"></i> Desktop</span>
+                                        <div class="device-bar">
+                                            <div class="device-fill desktop"></div>
+                                        </div>
+                                        <span class="device-percentage" id="desktopPercentage">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Per Tip Performance -->
+                        <div class="metrics-section">
+                            <div class="section-header-inline">
+                                <h3>Player Performance</h3>
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <i class="fas fa-search search-icon"></i>
+                                        <input type="text" id="tipSearchInput" placeholder="Search by Phone or Player ID..." class="search-input">
+                                        <button id="clearSearchBtn" class="clear-search d-none">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Date Selector Calendar -->
+                            <div class="date-selector-container">
+                                <div class="date-filters">
+                                    <div class="date-range-picker">
+                                        <label for="startDate">From:</label>
+                                        <div class="date-input-wrapper">
+                                            <input type="text" id="startDate" class="date-input" placeholder="Select start date">
+                                            <button type="button" class="calendar-btn" onclick="openDatePicker('startDate')">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </button>
+                                            <input type="date" id="startDateHidden" class="hidden-date-input" onchange="updateDateInput('startDate', this.value)">
+                                        </div>
+                                        <label for="endDate">To:</label>
+                                        <div class="date-input-wrapper">
+                                            <input type="text" id="endDate" class="date-input" placeholder="Select end date">
+                                            <button type="button" class="calendar-btn" onclick="openDatePicker('endDate')">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </button>
+                                            <input type="date" id="endDateHidden" class="hidden-date-input" onchange="updateDateInput('endDate', this.value)">
+                                        </div>
+                                        <button class="btn btn-secondary" onclick="clearDateFilter()">
+                                            <i class="fas fa-times"></i> Clear
+                                        </button>
+                                        <button class="btn btn-primary" onclick="filterByDateRange()">
+                                            <i class="fas fa-search"></i> Search
+                                        </button>
+                                    </div>
+                                    <div class="quick-filters">
+                                        <span class="filter-label">Quick filters:</span>
+                                        <button class="btn btn-outline" onclick="setQuickFilter('today')">Today</button>
+                                        <button class="btn btn-outline" onclick="setQuickFilter('week')">This Week</button>
+                                        <button class="btn btn-outline" onclick="setQuickFilter('month')">This Month</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tips-performance">
+                                <div class="table-container">
+                                    <div class="table-wrapper">
+                                        <table class="tips-table" id="tipsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Player ID</th>
+                                                    <th>Views</th>
+                                                    <th>Sessions</th>
+                                                    <th>Avg CTR</th>
+                                                    <th>Avg. Time</th>
+                                                    <th>Last Activity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tipsTableBody">
+                                                <tr>
+                                                    <td colspan="6" class="no-data">No tip data available</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pagination Controls -->
+                            <div class="pagination-container">
+                                <div class="pagination-info">
+                                    <span id="tableInfo">Showing 1-10 of 25 entries</span>
+                                </div>
+                                <div class="pagination-controls">
+                                    <label for="pageSize">Items per page:</label>
+                                    <select id="pageSize" class="page-size-selector" onchange="changePageSize(this.value)">
+                                        <option value="10" selected>10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </div>
+                                <div class="pagination-buttons">
+                                    <button class="btn btn-outline pagination-btn" onclick="goToPage('first')" id="firstPageBtn">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </button>
+                                    <button class="btn btn-outline pagination-btn" onclick="goToPage('prev')" id="prevPageBtn">
+                                        <i class="fas fa-angle-left"></i>
+                                    </button>
+                                    <div class="page-numbers" id="pageNumbers">
+                                        <button class="btn btn-outline pagination-btn page-number active" onclick="goToPage(1)">1</button>
+                                        <button class="btn btn-outline pagination-btn page-number" onclick="goToPage(2)">2</button>
+                                        <button class="btn btn-outline pagination-btn page-number" onclick="goToPage(3)">3</button>
+                                    </div>
+                                    <button class="btn btn-outline pagination-btn" onclick="goToPage('next')" id="nextPageBtn">
+                                        <i class="fas fa-angle-right"></i>
+                                    </button>
+                                    <button class="btn btn-outline pagination-btn" onclick="goToPage('last')" id="lastPageBtn">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Latest Player Activity -->
+                        <div class="metrics-section">
+                            <div class="section-header-inline">
+                                <h3><i class="fas fa-clock"></i> Latest Player Activity</h3>
+                                <div class="activity-status">
+                                    <span class="live-indicator"></span>
+                                    <span>Auto-refreshing</span>
+                                </div>
+                            </div>
+                            <div class="activity-search-bar">
+                                <div class="search-container">
+                                    <div class="search-box">
+                                        <i class="fas fa-search search-icon"></i>
+                                        <input type="text" id="activitySearchInput" placeholder="Search by Phone or Player ID..." class="search-input" data-sharkid="__0">
+                                        <button id="clearActivitySearchBtn" class="clear-search d-none">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="player-activity">
+                                <div class="activity-container">
+                                    <div id="latestActivity" class="activity-list">
+                                        <div class="activity-loading">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <span>Loading latest player activity...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Comments Section -->
+                <section id="comments" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-comments"></i>Comments Management</h2>
+                        <button class="btn btn-primary" onclick="openCommentModal()">
+                            Add Comment
+                        </button>
+                    </div>
+                    <div id="commentsTable" class="comments-table">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </section>
+
+
+                
+                <!-- Daily Games Section -->
+                <section id="games" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-gamepad"></i> Daily Games Management</h2>
+                        <button class="btn btn-primary" onclick="openGameModal()">
+                            Add Game
+                        </button>
+                    </div>
+                    <div class="games-management">
+                        <div class="games-list-section">
+                            <h3>Games Pool</h3>
+                            <div class="info-box">
+                                <i class="fas fa-info-circle"></i>
+                                <span>System randomly selects 3 active games for daily display. Add games by selecting from existing images.</span>
+                            </div>
+                            <div id="gamesList" class="games-list">
+                                <!-- Games list will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Winner Board Section -->
+                <section id="winners" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-trophy"></i> Winner Board Management</h2>
+                        <button class="btn btn-primary" onclick="openWinnerModal()">
+                            Add Winner
+                        </button>
+                    </div>
+                    <div id="winnersTable" class="winners-table">
+                        <!-- Winners will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Jackpot Timer Section -->
+                <section id="jackpot" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-coins"></i> Jackpot Timer Management</h2>
+                        <button class="btn btn-primary" onclick="openJackpotModal()">
+                            Add Message
+                        </button>
+                    </div>
+                    <div class="jackpot-management">
+                        <div class="jackpot-config">
+                            <h3>Prediction Times Configuration</h3>
+                            <div class="prediction-times" id="predictionTimes">
+                                <!-- Prediction times will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="jackpot-messages">
+                            <h3>Jackpot Messages</h3>
+                            <div id="jackpotMessagesTable" class="messages-table">
+                                <!-- Messages will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- OTP Requests Section -->
+                <section id="otp-requests" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-mobile-alt"></i> OTP Requests Logs</h2>
+                        <div class="otp-actions">
+                            <button class="btn btn-primary refresh-btn" onclick="refreshOTPLogs()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- OTP Statistics -->
+                    <div class="otp-stats" id="otpStats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="totalRequests">-</h3>
+                                <p>Total Requests</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="todayRequests">-</h3>
+                                <p>Today's Requests</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="uniquePhones">-</h3>
+                                <p>Unique Numbers</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="lastRequestTime">-</h3>
+                                <p>Last Request</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- OTP Logs Controls -->
+                    <div class="otp-controls">
+                        <div class="pagination-controls">
+                            <label for="otpPageSize">Items per page:</label>
+                            <select id="otpPageSize" onchange="changeOTPPageSize(this.value)">
+                                <option value="10" selected>10</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <div class="table-info">
+                            <span id="otpTableInfo">Loading...</span>
+                        </div>
+                    </div>
+
+                    <!-- OTP Logs Table -->
+                    <div class="otp-logs-container">
+                        <div class="table-wrapper">
+                            <table class="otp-table" id="otpTable">
+                                <thead>
+                                    <tr>
+                                        <th>Created Time</th>
+                                        <th>Phone Number</th>
+                                        <th>OTP Code</th>
+                                        <th>Action</th>
+                                        <th>Status</th>
+                                        <th>IP Address</th>
+                                        <th>User Agent</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="otpTableBody">
+                                    <tr>
+                                        <td colspan="7" class="loading-message">Loading OTP logs...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="otpPagination">
+                            <!-- Pagination controls will be added here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Videos Section -->
+                <section id="videos" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-video"></i> TV Session Management</h2>
+                        <button class="btn btn-primary" onclick="openVideoModal()">
+                            <i class="fas fa-plus"></i> Add Video
+                        </button>
+                    </div>
+                    <div class="videos-list" id="videosList">
+                        <!-- Videos will be loaded here -->
+                    </div>
+                    <div id="videoHistory" class="video-history-section">
+                        <h3>Video History</h3>
+                        <div class="video-history">
+                            <!-- Video history will be rendered here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tournament TV Section -->
+                <section id="tournament-tv" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-tv"></i> Tournament TV</h2>
+                        <button class="btn btn-primary" onclick="refreshTournamentTV()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="tournament-tv-content" id="tournamentTVContent">
+                        <div class="current-tournament">
+                            <h3>Current Tournament</h3>
+                            <div class="tournament-display">
+                                <img id="currentTournamentThumbnail" src="" alt="Tournament Thumbnail" style="width: 200px; height: auto;">
+                                <div class="tournament-info">
+                                    <h4 id="currentTournamentTitle">Tournament Title</h4>
+                                    <p id="currentTournamentDescription">Tournament Description</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tournamentPlaylistContainer">
+                            <!-- Tournament playlist will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Angpau Section -->
+                <section id="angpau" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-gift"></i> Angpau Game Configuration</h2>
+                    </div>
+
+                    <div class="angpau-management">
+                        <!-- Game Configuration Card -->
+                        <div class="config-card">
+                            <h3><i class="fas fa-cog"></i> Game Settings</h3>
+                            <p class="config-description">Configure the amounts shown on the 9 "other" angpau cards (the ones users don't pick). These amounts create the FOMO effect.</p>
+
+                            <!-- Generate Link Section -->
+                            <div class="generate-link-section">
+                                <h4 style="margin-bottom: 15px;"><i class="fas fa-link"></i> Generate Game Link</h4>
+                                <p class="info-text">Generate a unique link with the current prize configuration to share with players.</p>
+                                <div class="generate-link-input-group">
+                                    <input type="text" id="generatedLinkInput" class="generated-link-input" placeholder="Click 'Generate Link' to create a unique game URL" readonly>
+                                    <button type="button" id="generateLinkBtn" class="btn btn-success generate-link-btn">
+                                        <i class="fas fa-link"></i> Generate Link
+                                    </button>
+                                    <button type="button" id="copyLinkBtn" class="btn copy-link-btn">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+
+                            <form id="angpauConfigForm">
+                                <h4 style="margin-bottom: 15px;">Angpau Cards Configuration (2x5 Grid)</h4>
+                                <p class="info-text">Configure the amount and probability for each of the 10 angpau cards. Higher probability = more likely to win that specific card.</p>
+
+                                <div class="angpau-cards-grid">
+                                    <div class="card-config" data-card="1">
+                                        <h5>Card 1</h5>
+                                        <div class="form-group">
+                                            <label for="card1Amount">Amount</label>
+                                            <input type="text" id="card1Amount" name="card1Amount" placeholder="₹8" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card1Probability">Probability</label>
+                                            <input type="number" id="card1Probability" name="card1Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="2">
+                                        <h5>Card 2</h5>
+                                        <div class="form-group">
+                                            <label for="card2Amount">Amount</label>
+                                            <input type="text" id="card2Amount" name="card2Amount" placeholder="₹50" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card2Probability">Probability</label>
+                                            <input type="number" id="card2Probability" name="card2Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="3">
+                                        <h5>Card 3</h5>
+                                        <div class="form-group">
+                                            <label for="card3Amount">Amount</label>
+                                            <input type="text" id="card3Amount" name="card3Amount" placeholder="₹100" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card3Probability">Probability</label>
+                                            <input type="number" id="card3Probability" name="card3Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="4">
+                                        <h5>Card 4</h5>
+                                        <div class="form-group">
+                                            <label for="card4Amount">Amount</label>
+                                            <input type="text" id="card4Amount" name="card4Amount" placeholder="₹300" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card4Probability">Probability</label>
+                                            <input type="number" id="card4Probability" name="card4Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="5">
+                                        <h5>Card 5</h5>
+                                        <div class="form-group">
+                                            <label for="card5Amount">Amount</label>
+                                            <input type="text" id="card5Amount" name="card5Amount" placeholder="₹1000" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card5Probability">Probability</label>
+                                            <input type="number" id="card5Probability" name="card5Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="6">
+                                        <h5>Card 6</h5>
+                                        <div class="form-group">
+                                            <label for="card6Amount">Amount</label>
+                                            <input type="text" id="card6Amount" name="card6Amount" placeholder="₹3000" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card6Probability">Probability</label>
+                                            <input type="number" id="card6Probability" name="card6Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="7">
+                                        <h5>Card 7</h5>
+                                        <div class="form-group">
+                                            <label for="card7Amount">Amount</label>
+                                            <input type="text" id="card7Amount" name="card7Amount" placeholder="₹800" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card7Probability">Probability</label>
+                                            <input type="number" id="card7Probability" name="card7Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="8">
+                                        <h5>Card 8</h5>
+                                        <div class="form-group">
+                                            <label for="card8Amount">Amount</label>
+                                            <input type="text" id="card8Amount" name="card8Amount" placeholder="₹5000" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card8Probability">Probability</label>
+                                            <input type="number" id="card8Probability" name="card8Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="9">
+                                        <h5>Card 9</h5>
+                                        <div class="form-group">
+                                            <label for="card9Amount">Amount</label>
+                                            <input type="text" id="card9Amount" name="card9Amount" placeholder="₹2000" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card9Probability">Probability</label>
+                                            <input type="number" id="card9Probability" name="card9Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-config" data-card="10">
+                                        <h5>Card 10</h5>
+                                        <div class="form-group">
+                                            <label for="card10Amount">Amount</label>
+                                            <input type="text" id="card10Amount" name="card10Amount" placeholder="₹1500" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="card10Probability">Probability</label>
+                                            <input type="number" id="card10Probability" name="card10Probability" placeholder="0" min="0" value="0" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions" style="margin-top: 30px;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Configuration
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="loadAngpauConfig()">
+                                        <i class="fas fa-undo"></i> Reset to Saved
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Preview Card -->
+                        <div class="preview-card" style="margin-top: 30px;">
+                            <h3><i class="fas fa-eye"></i> Game Preview</h3>
+                            <p>Preview the angpau game:</p>
+                            <a href="/angpau" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i> Open Angpau Game
+                            </a>
+                        </div>
+                    </div>
+                </section>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Probability Validation Modal -->
+    <div id="probabilityValidationModal" class="modal">
+        <div class="modal-content validation-modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Probability Validation Error</h3>
+                <span class="close" onclick="closeProbabilityValidationModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="validation-message">
+                    <p class="main-message">Total probability must equal 100% to generate a game link.</p>
+                    <div class="current-total">
+                        <strong>Current Total: <span id="currentTotalProbability">0</span>%</strong>
+                    </div>
+                    <div class="validation-details">
+                        <p>Please adjust the probability values for your cards so they add up to exactly 100%.</p>
+                        <div class="validation-tips">
+                            <h4><i class="fas fa-lightbulb"></i> Tips:</h4>
+                            <ul>
+                                <li>Higher probability = more likely to win that card</li>
+                                <li>Set at least one card with a probability > 0</li>
+                                <li>Use whole numbers for easier calculation</li>
+                                <li>Example: Card 1: 50%, Card 2: 30%, Card 3: 20%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeProbabilityValidationModal()" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner Modal -->
+    <div id="bannerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Banner</h3>
+                <span class="close" onclick="closeBannerModal()">&times;</span>
+            </div>
+            <form id="bannerForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="bannerTitle">Title (Optional)</label>
+                    <input type="text" id="bannerTitle" name="title" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="bannerFile">Image File</label>
+                    <input type="file" id="bannerFile" name="banner" accept="image/jpeg,image/png,image/webp" required>
+                    <small>Supported formats: JPG, PNG, WebP (Max 5MB)</small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeBannerModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload Banner</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Comment</h3>
+                <span class="close" onclick="closeCommentModal()">&times;</span>
+            </div>
+            <form id="commentForm">
+                <input type="hidden" id="commentId" name="id">
+                <div class="form-group">
+                    <label for="commentUsername">Username</label>
+                    <input type="text" id="commentUsername" name="username" maxlength="50" required>
+                </div>
+                <div class="form-group">
+                    <label for="commentText">Comment</label>
+                    <textarea id="commentText" name="comment" maxlength="500" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="commentAvatar">Avatar (Emoji)</label>
+                    <input type="text" id="commentAvatar" name="avatar" maxlength="10" placeholder="🎮" value="🎮">
+                </div>
+                <div class="form-group">
+                    <label for="commentTimestamp">Timestamp</label>
+                    <select id="commentTimestamp" name="timestamp">
+                        <option value="">Auto-generate</option>
+                        <option value="2 mins ago">2 mins ago</option>
+                        <option value="5 mins ago">5 mins ago</option>
+                        <option value="10 mins ago">10 mins ago</option>
+                        <option value="15 mins ago">15 mins ago</option>
+                        <option value="30 mins ago">30 mins ago</option>
+                        <option value="1 hour ago">1 hour ago</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeCommentModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Update Video</h3>
+                <span class="close" onclick="closeVideoModal()">&times;</span>
+            </div>
+            <div class="video-tabs">
+                <button class="video-tab-btn active" data-type="youtube">YouTube URL</button>
+                <button class="video-tab-btn" data-type="upload">Upload MP4</button>
+            </div>
+            
+            <!-- YouTube URL Form -->
+            <form id="videoUrlForm" class="video-form active">
+                <div class="form-group">
+                    <label for="videoUrl">YouTube URL</label>
+                    <input type="url" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=..." required>
+                </div>
+                <div class="form-group">
+                    <label for="videoUrlTitle">Title (Optional)</label>
+                    <input type="text" id="videoUrlTitle" name="title" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="videoUrlDescription">Description (Optional)</label>
+                    <textarea id="videoUrlDescription" name="description" maxlength="500" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeVideoModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Video URL</button>
+                </div>
+            </form>
+
+            <!-- Video Upload Form -->
+            <form id="videoUploadForm" class="video-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="videoFile">Video File</label>
+                    <input type="file" id="videoFile" name="video" accept="video/mp4,video/webm,video/ogg" required>
+                    <small>Supported formats: MP4, WebM, OGG (Max 100MB)</small>
+                </div>
+                <div class="form-group">
+                    <label for="videoUploadTitle">Title (Optional)</label>
+                    <input type="text" id="videoUploadTitle" name="title" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="videoUploadDescription">Description (Optional)</label>
+                    <textarea id="videoUploadDescription" name="description" maxlength="500" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeVideoModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Winner Modal -->
+    <div id="winnerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Winner</h3>
+                <span class="close" onclick="closeWinnerModal()">&times;</span>
+            </div>
+            <form id="winnerForm">
+                <input type="hidden" id="winnerId" name="id">
+                <div class="form-group">
+                    <label for="winnerUsername">Username</label>
+                    <input type="text" id="winnerUsername" name="username" maxlength="50" placeholder="Lucky****2" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerGame">Game Name</label>
+                    <input type="text" id="winnerGame" name="game" maxlength="100" placeholder="Jili Boxing King" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerBetAmount">Bet Amount (₹)</label>
+                    <input type="number" id="winnerBetAmount" name="betAmount" min="1" placeholder="500" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerWinAmount">Win Amount (₹)</label>
+                    <input type="number" id="winnerWinAmount" name="winAmount" min="1" placeholder="24000" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerMultiplier">Multiplier</label>
+                    <input type="text" id="winnerMultiplier" name="multiplier" placeholder="48x" required>
+                </div>
+                <div class="form-group">
+                    <label for="winnerQuote">Quote</label>
+                    <textarea id="winnerQuote" name="quote" maxlength="200" placeholder="Bhai full paisa vasool ho gaya aaj!" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="winnerAvatar">Avatar</label>
+                    <select id="winnerAvatar" name="avatar" required>
+                        <option value="👑">👑 Crown</option>
+                        <option value="💎">💎 Diamond</option>
+                        <option value="🔥">🔥 Fire</option>
+                        <option value="⭐">⭐ Star</option>
+                        <option value="🎰">🎰 Slot Machine</option>
+                        <option value="💰">💰 Money Bag</option>
+                        <option value="🏆">🏆 Trophy</option>
+                        <option value="⚡">⚡ Lightning</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeWinnerModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Winner</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Jackpot Message Modal -->
+    <div id="jackpotModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Jackpot Message</h3>
+                <span class="close" onclick="closeJackpotModal()">&times;</span>
+            </div>
+            <form id="jackpotForm">
+                <input type="hidden" id="jackpotId" name="id">
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                        <label for="jackpotMessage">Prediction Message</label>
+                        <button type="button" class="btn btn-secondary btn-sm ai-generate-btn" onclick="autoGenerateMessage()">
+                            Auto Generate Message
+                        </button>
+                    </div>
+                    <textarea id="jackpotMessage" name="message" maxlength="200" rows="3" required 
+                              placeholder="Aaj 9:30PM se 10:00PM tak Dragon Tiger mein bonus rate double hoga!"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="jackpotCategory">Game Category</label>
+                    <select id="jackpotCategory" name="category">
+                        <option value="Dragon Tiger">Dragon Tiger</option>
+                        <option value="BNG Slot">BNG Slot</option>
+                        <option value="Fishing Games">Fishing Games</option>
+                        <option value="Crazy Time">Crazy Time</option>
+                        <option value="PG Slots">PG Slots</option>
+                        <option value="Jili Games">Jili Games</option>
+                        <option value="Live Casino">Live Casino</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="jackpotTime">Prediction Time (IST)</label>
+                    <select id="jackpotTime" name="predictionTime" required>
+                        <option value="">Select prediction time</option>
+                        <option value="2:00">2:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="17:00">5:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeJackpotModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Game Modal -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content game-modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Game</h3>
+                <span class="close" onclick="closeGameModal()">&times;</span>
+            </div>
+            <form id="gameForm">
+                <input type="hidden" id="gameId" name="id">
+                <input type="hidden" id="selectedImage" name="selectedImage" required>
+                <div class="form-group">
+                    <label for="gameTitle">Game Title</label>
+                    <input type="text" id="gameTitle" name="title" maxlength="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="imageGallery">Select Game Image</label>
+                    <div id="imageGallery" class="image-gallery">
+                        <!-- Image gallery will be loaded here -->
+                    </div>
+                    <div class="selected-image-preview" id="selectedImagePreview">
+                        <strong>Selected:</strong> <span id="selectedImageName"></span>
+                        <img id="selectedImageImg">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <h4>Recent Win Information (Optional)</h4>
+                    
+                    <!-- Auto-generate controls -->
+                    <div class="auto-generate-section">
+                        <h5 class="auto-generate-title">
+                            <i class="fas fa-magic"></i> Auto-Generate Options
+                        </h5>
+                        <div class="auto-generate-checkboxes">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoAmount" onchange="toggleAutoGenerate('amount')">
+                                <span class="checkbox-text">Auto Amount (₹3,000-₹40,000)</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoPlayer" onchange="toggleAutoGenerate('player')">
+                                <span class="checkbox-text">Auto Player Name</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="autoComment" onchange="toggleAutoGenerate('comment')">
+                                <span class="checkbox-text">Auto Comment</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="winAmount">Win Amount</label>
+                            <input type="text" id="winAmount" name="winAmount" placeholder="₹15,420">
+                        </div>
+                        <div class="form-group">
+                            <label for="winPlayer">Player Name</label>
+                            <input type="text" id="winPlayer" name="winPlayer" placeholder="Lucky***Player">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="winComment">Win Comment</label>
+                        <textarea id="winComment" name="winComment" maxlength="300" rows="3"
+                                  placeholder="Amazing game! Just won big!"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeGameModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Game</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Angpau Modal -->
+    <div id="angpauModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Angpau</h3>
+                <span class="close" onclick="closeAngpauModal()">&times;</span>
+            </div>
+            <form id="angpauForm">
+                <input type="hidden" id="angpauId" name="id">
+                <div class="form-group">
+                    <label for="angpauTitle">Title</label>
+                    <input type="text" id="angpauTitle" name="title" maxlength="100" placeholder="Special Bonus Angpau" required>
+                </div>
+                <div class="form-group">
+                    <label for="angpauAmount">Amount (₹)</label>
+                    <input type="number" id="angpauAmount" name="amount" min="1" placeholder="1000" required>
+                </div>
+                <div class="form-group">
+                    <label for="angpauDescription">Description</label>
+                    <textarea id="angpauDescription" name="description" maxlength="500" rows="3" placeholder="Claim your special bonus!"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="angpauCode">Promo Code (Optional)</label>
+                    <input type="text" id="angpauCode" name="code" maxlength="50" placeholder="LUCKY2024">
+                </div>
+                <div class="form-group">
+                    <label for="angpauExpiry">Expiry Date</label>
+                    <input type="datetime-local" id="angpauExpiry" name="expiryDate">
+                </div>
+                <div class="form-group">
+                    <label for="angpauStatus">Status</label>
+                    <select id="angpauStatus" name="status" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="expired">Expired</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeAngpauModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Angpau</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Custom Calendar Modal -->
+    <div id="calendarModal" class="calendar-modal">
+        <div class="calendar-modal-content">
+            <div class="calendar-header">
+                <button class="calendar-nav-btn" id="prevMonth">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="calendar-title">
+                    <span id="currentMonth">January</span>
+                    <span id="currentYear">2024</span>
+                </div>
+                <button class="calendar-nav-btn" id="nextMonth">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="calendar-weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
+            </div>
+            <div class="calendar-days" id="calendarDays">
+                <!-- Days will be generated by JavaScript -->
+            </div>
+            <div class="calendar-footer">
+                <button class="btn btn-secondary" onclick="closeCalendar()">Cancel</button>
+                <button class="btn btn-primary" onclick="selectCurrentDate()">Today</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/admin/assets/app.js"></script>
+</body>
+</html>

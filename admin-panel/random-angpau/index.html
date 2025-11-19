@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pick Your Angpau! 🧧</title>
+    <link rel="stylesheet" href="/angpau-assets/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧧 Pick Your Lucky Angpau! 🧧</h1>
+        <p class="instruction">Choose one red envelope to reveal your prize!</p>
+
+        <div class="angpau-grid">
+            <div class="angpau" data-index="0">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="1">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="2">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="3">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="4">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="5">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="6">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="7">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="8">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+            <div class="angpau" data-index="9">
+                <div class="angpau-front">
+                    <div class="angpau-symbol">🧧</div>
+                </div>
+                <div class="angpau-back">
+                    <div class="prize-amount"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Refresh Button -->
+        <button class="refresh-btn" onclick="resetGame()">Refresh Now</button>
+        
+        <!-- Winners Display -->
+        <div class="winners-section">
+            <div class="winners-header">
+                <h3>🏆 Recent Winners</h3>
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    <span class="live-text">LIVE</span>
+                </div>
+            </div>
+            <div class="winners-list" id="winnersList">
+                <!-- Winners will be dynamically generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="prizeModal">
+        <div class="modal-content">
+            <h2>Congratulations! 🎉</h2>
+            <p class="prize-message">You got <span id="prizeAmount"></span></p>
+            <p class="prize-message screenshot-instruction">Take a screenshot and send to customer service</p>
+            <button class="reset-btn" onclick="window.open('https://nepalwin.com', '_blank')">Contact Livechat</button>
+        </div>
+    </div>
+
+    <script src="/angpau-assets/script.js"></script>
+</body>
+</html>

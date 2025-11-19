@@ -1,0 +1,630 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    text-align: center;
+    max-width: 1200px;
+    width: 100%;
+}
+
+h1 {
+    color: #fff;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.instruction {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.angpau-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.angpau-grid.shuffling {
+    pointer-events: none;
+}
+
+.angpau.shuffling {
+    z-index: 100;
+    transition: all 1s ease-in-out;
+}
+
+.angpau.shuffle-center {
+    transform: translate(var(--shuffle-x), var(--shuffle-y)) scale(0.8) !important;
+}
+
+.angpau.shuffle-return {
+    transform: translate(0, 0) scale(1) !important;
+}
+
+.angpau {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2/3;
+    cursor: pointer;
+    perspective: 1000px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.hand-pointer {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    background-image: url('/angpau-assets/img/hand-pointer.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 10;
+    animation: pointAnimation 1.5s ease-in-out infinite;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hand-pointer.show {
+    opacity: 1;
+}
+
+@keyframes pointAnimation {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(-15px, -15px);
+    }
+}
+
+.angpau-front,
+.angpau-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    transition: transform 0.6s ease;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.angpau-front {
+    background: linear-gradient(135deg, #c92a2a 0%, #e03131 50%, #c92a2a 100%);
+    border: 3px solid #ffd700;
+    transform: rotateY(0deg);
+}
+
+.angpau-symbol {
+    font-size: 3rem;
+    color: #ffd700;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.angpau-back {
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border: 3px solid #ffd700;
+    transform: rotateY(180deg);
+}
+
+.prize-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #c92a2a;
+}
+
+.angpau.flipped .angpau-front {
+    transform: rotateY(180deg);
+}
+
+.angpau.flipped .angpau-back {
+    transform: rotateY(0deg);
+}
+
+.angpau:not(.selected):not(.flipped):hover .angpau-front {
+    transform: scale(1.05) rotateY(0deg);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.angpau.disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.angpau.selected .angpau-front {
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.4s ease;
+    max-width: 400px;
+    width: 90%;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content h2 {
+    color: #c92a2a;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.prize-message {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.screenshot-instruction {
+    font-size: 0.9rem !important;
+    color: #666 !important;
+    margin-bottom: 20px !important;
+    margin-top: 10px !important;
+    font-style: italic;
+}
+
+#prizeAmount {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #c92a2a;
+    display: block;
+    margin: 20px 0;
+}
+
+.reset-btn {
+    background: linear-gradient(135deg, #c92a2a 0%, #e03131 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(201, 42, 42, 0.3);
+}
+
+.reset-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(201, 42, 42, 0.4);
+}
+
+.reset-btn:active {
+    transform: translateY(0);
+}
+
+/* Refresh Button */
+.refresh-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 30px auto;
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.refresh-btn.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.refresh-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.refresh-btn:active {
+    transform: translateY(0);
+}
+
+/* Winners Section */
+.winners-section {
+    margin-top: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.winners-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.winners-section h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.live-dot {
+    width: 12px;
+    height: 12px;
+    background: #ff4444;
+    border-radius: 50%;
+    animation: breathe 2s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+}
+
+.live-text {
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    animation: breatheText 2s ease-in-out infinite;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes breathe {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.7;
+    }
+}
+
+@keyframes breatheText {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+.winners-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.winner-item {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: slideInWinner 0.5s ease;
+    border-left: 4px solid #ffd700;
+}
+
+@keyframes slideInWinner {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.winner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.winner-name {
+    font-weight: bold;
+    color: #333;
+    font-size: 1rem;
+}
+
+.winner-phone {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.winner-prize {
+    background: linear-gradient(135deg, #c92a2a 0%, #e03131 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(201, 42, 42, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .angpau-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .instruction {
+        font-size: 1rem;
+    }
+
+    .angpau-symbol {
+        font-size: 2rem;
+    }
+
+    .prize-amount {
+        font-size: 1.2rem;
+    }
+
+    .winners-section {
+        margin-top: 40px;
+        padding: 15px;
+        height: 350px;
+    }
+
+    .winners-section h3 {
+        font-size: 1.3rem;
+    }
+
+    .live-text {
+        font-size: 0.8rem;
+    }
+
+    .live-dot {
+        width: 10px;
+        height: 10px;
+    }
+
+    .winner-item {
+        padding: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+
+
+    .winner-name {
+        font-size: 0.9rem;
+    }
+
+    .winner-phone {
+        font-size: 0.8rem;
+    }
+
+    .winner-prize {
+        align-self: flex-end;
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+
+    .hand-pointer {
+        width: 30px;
+        height: 30px;
+        bottom: -8px;
+        right: -8px;
+    }
+
+    .refresh-btn {
+        margin: 25px auto;
+        padding: 10px 25px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .angpau-grid {
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 8px;
+        max-width: 100%;
+    }
+
+    .angpau {
+        aspect-ratio: 3/4;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .angpau-symbol {
+        font-size: 1.2rem;
+    }
+
+    .prize-amount {
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        padding: 30px 20px;
+    }
+
+    .winners-section {
+        margin-top: 40px;
+        padding: 12px;
+        height: 300px;
+    }
+
+    .winners-section h3 {
+        font-size: 1.2rem;
+    }
+
+    .winners-header {
+        margin-bottom: 12px;
+    }
+
+    .live-text {
+        font-size: 0.7rem;
+    }
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+    }
+
+    .winner-item {
+        padding: 10px;
+        gap: 6px;
+    }
+
+    .winner-name {
+        font-size: 18px;
+    }
+
+    .winner-phone {
+        font-size: 0.75rem;
+    }
+
+    .winner-prize {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+
+    .hand-pointer {
+        width: 25px;
+        height: 25px;
+        bottom: -6px;
+        right: -6px;
+    }
+
+    @keyframes pointAnimation {
+        0%, 100% {
+            transform: translate(0, 0);
+        }
+        50% {
+            transform: translate(-10px, -10px);
+        }
+    }
+
+    .refresh-btn {
+        margin: 20px auto;
+        padding: 8px 20px;
+        font-size: 0.8rem;
+    }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "luckytaj-fullstack",
+  "version": "1.0.0",
+  "description": "Lucky Taj Angpau Game - Full Stack Development",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "nodemon server/server.js",
+    "client:dev": "cd client && npm run dev",
+    "server:start": "node server/server.js",
+    "client:build": "cd client && npm run build",
+    "install:all": "npm install && cd client && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2"
+  },
+  "dependencies": {
+    "socket.io": "^4.6.1"
+  }
+}

@@ -162,8 +162,8 @@ body {
 }
 
 .logo {
-    height: 30px;
-    margin-bottom: 15px;
+    height: 48px;
+    margin-bottom: 5px;
 }
 
 .login-header h2 {
@@ -210,7 +210,7 @@ body {
 }
 
 .logo-small {
-    height: 25px;
+    height: 41px;
 }
 
 .header-left h1 {

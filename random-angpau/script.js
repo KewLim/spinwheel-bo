@@ -44,13 +44,19 @@ function checkPlayedStatus() {
 }
 
 // Function to mark session/game as played
-function markAsPlayed(sessionId = null) {
+function markAsPlayed(sessionId = null, prizeAmount = null) {
     if (sessionId) {
         localStorage.setItem(`angpau_played_${sessionId}`, 'true');
         localStorage.setItem(`angpau_played_${sessionId}_timestamp`, new Date().toISOString());
+        if (prizeAmount) {
+            localStorage.setItem(`angpau_played_${sessionId}_prize`, prizeAmount);
+        }
     } else {
         localStorage.setItem('angpau_played_general', 'true');
         localStorage.setItem('angpau_played_general_timestamp', new Date().toISOString());
+        if (prizeAmount) {
+            localStorage.setItem('angpau_played_general_prize', prizeAmount);
+        }
     }
     hasPlayed = true;
 }
@@ -350,7 +356,7 @@ function initGame() {
 async function submitGameResult(prizeAmount) {
     if (!currentSessionId) {
         // No session ID, just mark locally for general games
-        markAsPlayed();
+        markAsPlayed(null, prizeAmount);
         return;
     }
     
@@ -366,23 +372,23 @@ async function submitGameResult(prizeAmount) {
         });
         
         if (response.ok) {
-            // Mark as played locally
-            markAsPlayed(currentSessionId);
+            // Mark as played locally with prize amount
+            markAsPlayed(currentSessionId, prizeAmount);
             console.log('Game result submitted successfully');
         } else if (response.status === 403) {
             // Already played on server
             const errorData = await response.json();
-            markAsPlayed(currentSessionId);
+            markAsPlayed(currentSessionId, prizeAmount);
             showAlreadyPlayedModal();
         } else {
             console.error('Failed to submit game result:', response.status);
             // Still mark as played locally to prevent replaying
-            markAsPlayed(currentSessionId);
+            markAsPlayed(currentSessionId, prizeAmount);
         }
     } catch (error) {
         console.error('Error submitting game result:', error);
         // Still mark as played locally to prevent replaying
-        markAsPlayed(currentSessionId);
+        markAsPlayed(currentSessionId, prizeAmount);
     }
 }
 
@@ -556,6 +562,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 function showAlreadyPlayedModal() {
     const modal = document.getElementById('alreadyPlayedModal');
     if (modal) {
+        // Get the stored prize amount
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session');
+        let prizeAmount = '₹0';
+        
+        if (sessionId) {
+            const storedPrize = localStorage.getItem(`angpau_played_${sessionId}_prize`);
+            if (storedPrize) {
+                prizeAmount = storedPrize;
+            }
+        } else {
+            const storedPrize = localStorage.getItem('angpau_played_general_prize');
+            if (storedPrize) {
+                prizeAmount = storedPrize;
+            }
+        }
+        
+        // Display the prize amount
+        const rewardElement = document.getElementById('playerReward');
+        if (rewardElement) {
+            rewardElement.textContent = prizeAmount;
+        }
+        
         modal.classList.add('show');
         
         // Hide the main game content

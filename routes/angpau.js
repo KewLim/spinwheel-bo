@@ -256,13 +256,10 @@ router.get('/session/:sessionId', async (req, res) => {
         if (session.playCount > 0) {
             return res.status(403).json({ 
                 error: 'Session already played',
-                message: 'You already played\nPlease contact us for new link',
+                message: 'You already played\nPlease contact customer service to play next game',
                 alreadyPlayed: true
             });
         }
-
-        // Increment play count (this will make it 1, preventing future plays)
-        await session.incrementPlayCount();
 
         res.json({
             cardConfigs: session.cardConfigs
@@ -270,6 +267,50 @@ router.get('/session/:sessionId', async (req, res) => {
     } catch (error) {
         console.error('Error fetching session config:', error);
         res.status(500).json({ error: 'Failed to fetch session configuration' });
+    }
+});
+
+// Mark session as played (when user actually plays the game)
+router.post('/session/:sessionId/play', async (req, res) => {
+    try {
+        const { prizeAmount } = req.body;
+        const session = await GameSession.findBySessionId(req.params.sessionId);
+
+        if (!session) {
+            return res.status(404).json({ error: 'Session not found' });
+        }
+
+        if (!session.isActive) {
+            return res.status(410).json({ error: 'Session is no longer active' });
+        }
+
+        // Check if session has already been played
+        if (session.playCount > 0) {
+            return res.status(403).json({ 
+                error: 'Session already played',
+                message: 'You already played\nPlease contact customer service to play next game',
+                alreadyPlayed: true
+            });
+        }
+
+        // Mark session as played
+        await session.incrementPlayCount();
+        
+        // Optional: Store the prize amount won
+        if (prizeAmount) {
+            session.lastPrizeWon = prizeAmount;
+            session.playedAt = new Date();
+            await session.save();
+        }
+
+        res.json({
+            success: true,
+            message: 'Game completed successfully',
+            prizeAmount: prizeAmount
+        });
+    } catch (error) {
+        console.error('Error marking session as played:', error);
+        res.status(500).json({ error: 'Failed to mark session as played' });
     }
 });
 

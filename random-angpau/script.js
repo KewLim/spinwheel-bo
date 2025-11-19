@@ -17,12 +17,55 @@ let cardConfigs = [
 let gameActive = false; // Start inactive until shuffle completes
 let selectedIndex = null;
 let gamePhase = 'initial'; // 'initial', 'shuffling', 'ready', 'playing'
+let currentSessionId = null;
+let hasPlayed = false;
+
+// Function to check if session/game has been played
+function checkPlayedStatus() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session');
+    
+    if (sessionId) {
+        // Check localStorage for this specific session
+        const playedKey = `angpau_played_${sessionId}`;
+        if (localStorage.getItem(playedKey)) {
+            showAlreadyPlayedModal();
+            return true;
+        }
+    } else {
+        // Check localStorage for general game state
+        if (localStorage.getItem('angpau_played_general')) {
+            showAlreadyPlayedModal();
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Function to mark session/game as played
+function markAsPlayed(sessionId = null) {
+    if (sessionId) {
+        localStorage.setItem(`angpau_played_${sessionId}`, 'true');
+        localStorage.setItem(`angpau_played_${sessionId}_timestamp`, new Date().toISOString());
+    } else {
+        localStorage.setItem('angpau_played_general', 'true');
+        localStorage.setItem('angpau_played_general_timestamp', new Date().toISOString());
+    }
+    hasPlayed = true;
+}
 
 // Function to load configuration from backend
 async function loadGameConfiguration() {
     try {
+        // First check if game has been played locally
+        if (checkPlayedStatus()) {
+            return; // Stop execution if already played
+        }
+        
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session');
+        currentSessionId = sessionId;
         
         let response;
         if (sessionId) {
@@ -43,6 +86,7 @@ async function loadGameConfiguration() {
             // Handle already played scenario
             const errorData = await response.json();
             if (errorData.alreadyPlayed) {
+                markAsPlayed(sessionId); // Store locally too
                 showAlreadyPlayedModal();
                 throw new Error('Session already played'); // Stop further initialization
             }
@@ -302,9 +346,49 @@ function initGame() {
     });
 }
 
+// Function to submit game result to backend
+async function submitGameResult(prizeAmount) {
+    if (!currentSessionId) {
+        // No session ID, just mark locally for general games
+        markAsPlayed();
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/angpau/session/${currentSessionId}/play`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                prizeAmount: prizeAmount
+            })
+        });
+        
+        if (response.ok) {
+            // Mark as played locally
+            markAsPlayed(currentSessionId);
+            console.log('Game result submitted successfully');
+        } else if (response.status === 403) {
+            // Already played on server
+            const errorData = await response.json();
+            markAsPlayed(currentSessionId);
+            showAlreadyPlayedModal();
+        } else {
+            console.error('Failed to submit game result:', response.status);
+            // Still mark as played locally to prevent replaying
+            markAsPlayed(currentSessionId);
+        }
+    } catch (error) {
+        console.error('Error submitting game result:', error);
+        // Still mark as played locally to prevent replaying
+        markAsPlayed(currentSessionId);
+    }
+}
+
 // Handle angpau click
 function handleAngpauClick(clickedAngpau, index) {
-    if (!gameActive) return;
+    if (!gameActive || hasPlayed) return;
 
     // Stop hand pointer animation
     stopHandPointerAnimation();
@@ -318,6 +402,9 @@ function handleAngpauClick(clickedAngpau, index) {
 
     // User gets prize based on weighted probability
     const prizeAmount = selectUserPrize();
+
+    // Submit game result to backend immediately
+    submitGameResult(prizeAmount);
 
     // Set the selected angpau's prize to the calculated amount
     const selectedPrizeElement = clickedAngpau.querySelector('.prize-amount');
@@ -376,6 +463,12 @@ function hideModal() {
 
 // Reset the game
 function resetGame() {
+    // Check if game has been played - if so, show modal instead
+    if (hasPlayed || checkPlayedStatus()) {
+        showAlreadyPlayedModal();
+        return;
+    }
+    
     // Hide modal
     hideModal();
     
@@ -415,34 +508,42 @@ window.addEventListener('click', (event) => {
 
 // Initialize the game when the page loads
 document.addEventListener('DOMContentLoaded', async () => {
+    // First check if game has been played
+    if (checkPlayedStatus()) {
+        // Game already played, don't initialize
+        return;
+    }
+    
     // First load configuration from backend
     try {
         await loadGameConfiguration();
         
-        // Only initialize game if configuration loaded successfully (not already played)
-        initGame();
-        startWinnerGeneration();
-        
-        // Add event listeners for buttons
-        const refreshBtn = document.getElementById('refreshBtn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', resetGame);
-        }
-        
-        const contactBtn = document.getElementById('contactBtn');
-        if (contactBtn) {
-            contactBtn.addEventListener('click', () => {
-                window.open('https://nepalwin.com', '_blank');
-            });
-        }
-        
-        // Start the initial sequence
-        setTimeout(() => {
-            showInitialRewards();
+        // Only initialize game if configuration loaded successfully and not already played
+        if (!hasPlayed) {
+            initGame();
+            startWinnerGeneration();
+            
+            // Add event listeners for buttons
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', resetGame);
+            }
+            
+            const contactBtn = document.getElementById('contactBtn');
+            if (contactBtn) {
+                contactBtn.addEventListener('click', () => {
+                    window.open('https://nepalwin.com', '_blank');
+                });
+            }
+            
+            // Start the initial sequence
             setTimeout(() => {
-                startShuffleAnimation();
-            }, 2000);
-        }, 1000);
+                showInitialRewards();
+                setTimeout(() => {
+                    startShuffleAnimation();
+                }, 2000);
+            }, 1000);
+        }
         
     } catch (error) {
         console.error('Failed to initialize game:', error);

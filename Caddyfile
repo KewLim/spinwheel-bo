@@ -7,17 +7,20 @@ admin.nepalwin.space {
     @root path /
     redir @root /admin 302
 
-    # Proxy admin and api routes to backend
-    reverse_proxy /admin* backend:3003
+    # Serve admin UI (static) from frontend container
+    reverse_proxy /admin* frontend:80
+
+    # API routes go to backend
     reverse_proxy /api* backend:3003
 
-    # Security headers and compression
+    # Security headers
     header {
         Strict-Transport-Security "max-age=31536000;"
         X-Frame-Options "DENY"
         X-Content-Type-Options "nosniff"
     }
 }
+
 
 spin.nepalwin.space {
     reverse_proxy frontend:80

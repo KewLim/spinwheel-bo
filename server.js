@@ -292,7 +292,7 @@ function selectPrizeByWeight(tiers) {
 
 const PORT = process.env.PORT || 3003;
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Admin backend server running on port ${PORT}`);
     console.log(`🔌 Socket.IO ready for connections`);
     console.log(`📡 Admin panel available at: http://localhost:${PORT}/admin`);

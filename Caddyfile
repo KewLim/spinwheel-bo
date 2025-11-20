@@ -1,0 +1,7 @@
+nepalwin.space {
+    reverse_proxy backend:3003
+}
+
+spin.nepalwin.space {
+    reverse_proxy frontend:80
+}
